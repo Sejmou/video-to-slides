@@ -1,0 +1,8 @@
+.btn {
+  min-width: min-content;
+}
+
+.btn span {
+  float: left;
+  display: inline-flex;
+}

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Button from './components/Button/Button';
+import YouTubePlayerButton from './components/Button/YouTubePlayerButton';
 import { jsPDF } from 'jspdf';
 
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
@@ -26,7 +26,6 @@ function getURLQueryParams() {
 }
 
 const videoId = getURLQueryParams().v;
-alert(videoId);
 
 const canvas = document.createElement('canvas');
 canvas.width = 1920;
@@ -136,22 +135,8 @@ const pdfGenHandler = async () => {
 
 ReactDOM.render(
   <React.StrictMode>
-    <button
-      id="test"
-      className="ytp-button"
-      style={{ minWidth: 'min-content' }}
-      onClick={clickHandler}
-    >
-      <span style={{ float: 'left', display: 'inline-flex' }}>Screenshot</span>
-    </button>
-    <button
-      id="test"
-      className="ytp-button"
-      style={{ minWidth: 'min-content' }}
-      onClick={pdfGenHandler}
-    >
-      <span style={{ float: 'left' }}>PDF</span>
-    </button>
+    <YouTubePlayerButton label="Screenshot" onClick={clickHandler} />
+    <YouTubePlayerButton label="PDF" onClick={pdfGenHandler} />
   </React.StrictMode>,
   container
 );

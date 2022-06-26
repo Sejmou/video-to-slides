@@ -1,7 +1,7 @@
 {
-  "name": "chrome-extension-typescript-starter",
-  "version": "1.0.0",
-  "description": "chrome-extension-typescript-starter",
+  "name": "video-to-slides",
+  "version": "0.1",
+  "description": "Chrome extension for converting video to slides (sequence of images)",
   "main": "index.js",
   "scripts": {
     "watch": "webpack --config webpack/webpack.dev.js --watch",
@@ -10,13 +10,14 @@
     "test": "npx jest",
     "style": "prettier --write \"src/**/*.{ts,tsx}\""
   },
-  "author": "",
+  "author": "Samo Kolter",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/chibat/chrome-extension-typescript-starter.git"
+    "url": "https://github.com/Sejmou/video-to-slides.git"
   },
   "dependencies": {
+    "@types/wicg-file-system-access": "^2020.9.5",
     "react": "^17.0.1",
     "react-dom": "^17.0.1"
   },

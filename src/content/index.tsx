@@ -100,7 +100,7 @@ const pdfGenHandler = async () => {
   pngFileNames.sort();
   console.log(pngFileNames);
 
-  pngFileNames.forEach(async fileName => {
+  for (const fileName of pngFileNames) {
     doc.addPage([canvas.height, canvas.width], 'landscape');
     const imgFileHandle = await dirHandle?.getFileHandle(fileName);
     if (!imgFileHandle) {
@@ -118,7 +118,7 @@ const pdfGenHandler = async () => {
       width: canvas.width,
       height: canvas.height,
     });
-  });
+  }
 
   console.log(canvas.width, canvas.height);
 

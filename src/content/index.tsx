@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import YouTubePlayerButton from './components/Button/YouTubePlayerButton';
 import { jsPDF } from 'jspdf';
+import { pdfOCR } from './ocr';
 
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
   if (msg.color) {
@@ -97,6 +98,7 @@ const pdfGenHandler = async () => {
     }
   }
   pngFileNames.sort();
+  console.log(pngFileNames);
 
   pngFileNames.forEach(async fileName => {
     doc.addPage([canvas.height, canvas.width], 'landscape');
@@ -118,19 +120,25 @@ const pdfGenHandler = async () => {
     });
   });
 
+  console.log(canvas.width, canvas.height);
+
   const pdfBlob = doc.output('blob');
   const pdfFileName =
     document
       .querySelector('h1.ytd-watch-metadata') // video title element
       ?.textContent?.trim()
       .replace(/[^a-zA-Z0-9 ]/g, '')
-      .replace(/ /, '_') || 'imgs_to_slides';
+      .replace(/ /g, '_') || 'imgs_to_slides';
   const pdfFileHandle = await dirHandle.getFileHandle(`${pdfFileName}.pdf`, {
     create: true,
   });
   const writableStream = await pdfFileHandle.createWritable();
   await writableStream.write(pdfBlob);
   await writableStream.close();
+  const pdfFile = await pdfFileHandle.getFile();
+  const ocrPdfFileName = pdfFileHandle.name.replace('.pdf', '_ocr.pdf');
+  //const pdfOcrRes = await pdfOCR(pdfFile);
+  //console.log(pdfOcrRes);
 };
 
 ReactDOM.render(

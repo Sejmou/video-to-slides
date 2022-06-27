@@ -1,0 +1,11 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+* {
+  font: Roboto;
+}
+
+.popup-container {
+  padding: 0 8px;
+  min-width: 400px;
+  min-height: 200px;
+}

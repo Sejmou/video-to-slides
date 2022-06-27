@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import YouTubePlayerButton from './components/Button/YouTubePlayerButton';
+import YouTubePlayerButton from './components/YouTubePlayerButton/YouTubePlayerButton';
 import { getURLQueryParams } from './util/url-queryparams';
 import { storeVideoSnapshot } from './util/video-to-image';
 import { createPdfFileFromImgFileHandles } from './util/images-to-pdf';

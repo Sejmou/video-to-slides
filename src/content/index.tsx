@@ -4,7 +4,6 @@ import YouTubePlayerButton from './components/Button/YouTubePlayerButton';
 import { getURLQueryParams } from './util/url-queryparams';
 import { storeVideoSnapshot } from './util/video-to-image';
 import { createPdfFileFromImgFileHandles } from './util/images-to-pdf';
-import { createOcrPdf } from './util/ocr';
 
 const container = document.createElement('span');
 const subtitleButton = document.querySelector('.ytp-settings-button')!;
@@ -16,17 +15,16 @@ const videoId = getURLQueryParams().v;
 
 let dirHandle: FileSystemDirectoryHandle | null;
 
-const clickHandler = async () => {
+const screenshotHandler = async () => {
   if (!dirHandle) {
     video.pause();
     dirHandle = await window.showDirectoryPicker();
-  } else {
-    const newFileHandle = await dirHandle.getFileHandle(
-      `${videoId}_${video.currentTime.toFixed(0).padStart(5, '0')}.png`, // pad to make sure we can use alphabetical sorting to sort the files by timestamp
-      { create: true }
-    );
-    await storeVideoSnapshot(video, newFileHandle);
   }
+  const newFileHandle = await dirHandle.getFileHandle(
+    `${videoId}_${video.currentTime.toFixed(0).padStart(5, '0')}.png`, // pad to make sure we can use alphabetical sorting to sort the files by timestamp
+    { create: true }
+  );
+  await storeVideoSnapshot(video, newFileHandle);
 };
 
 const pdfGenHandler = async () => {
@@ -51,18 +49,17 @@ const pdfGenHandler = async () => {
       .replace(/[^a-zA-Z0-9 ]/g, '')
       .replace(/ /g, '_') || 'imgs_to_slides';
 
-  const pdfFileHandle = await createPdfFileFromImgFileHandles(
+  await createPdfFileFromImgFileHandles(
     `${pdfFileName}.pdf`,
     dirHandle,
-    imgFileHandles
+    imgFileHandles,
+    true
   );
-
-  await createOcrPdf(pdfFileHandle, dirHandle);
 };
 
 ReactDOM.render(
   <React.StrictMode>
-    <YouTubePlayerButton label="Screenshot" onClick={clickHandler} />
+    <YouTubePlayerButton label="Screenshot" onClick={screenshotHandler} />
     <YouTubePlayerButton label="PDF" onClick={pdfGenHandler} />
   </React.StrictMode>,
   container

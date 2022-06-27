@@ -98,7 +98,6 @@ const pdfGenHandler = async () => {
     }
   }
   pngFileNames.sort();
-  console.log(pngFileNames);
 
   for (const fileName of pngFileNames) {
     doc.addPage([canvas.height, canvas.width], 'landscape');
@@ -117,6 +116,7 @@ const pdfGenHandler = async () => {
       y: 0,
       width: canvas.width,
       height: canvas.height,
+      compression: 'SLOW',
     });
   }
 
@@ -135,10 +135,20 @@ const pdfGenHandler = async () => {
   const writableStream = await pdfFileHandle.createWritable();
   await writableStream.write(pdfBlob);
   await writableStream.close();
+
   const pdfFile = await pdfFileHandle.getFile();
-  const ocrPdfFileName = pdfFileHandle.name.replace('.pdf', '_ocr.pdf');
-  //const pdfOcrRes = await pdfOCR(pdfFile);
-  //console.log(pdfOcrRes);
+  const pdfOcrBlob = await pdfOCR(pdfFile);
+  const pdfOcrFileName = pdfFileName + '_ocr';
+  const pdfOcrFileHandle = await dirHandle.getFileHandle(
+    `${pdfOcrFileName}.pdf`,
+    {
+      create: true,
+    }
+  );
+
+  const writableStreamOcr = await pdfOcrFileHandle.createWritable();
+  await writableStreamOcr.write(pdfOcrBlob);
+  await writableStreamOcr.close();
 };
 
 ReactDOM.render(

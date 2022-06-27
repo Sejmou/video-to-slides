@@ -19,7 +19,6 @@
   "dependencies": {
     "@types/jspdf": "^2.0.0",
     "@types/wicg-file-system-access": "^2020.9.5",
-    "convertapi-js": "^1.0.8",
     "jspdf": "^2.5.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1"

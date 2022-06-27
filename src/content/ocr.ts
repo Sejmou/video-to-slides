@@ -1,12 +1,14 @@
-import 'convertapi-js';
-
 export async function pdfOCR(pdfFile: File) {
-  const convertApi = ConvertApi.auth({
-    secret: 'IY58j20e5lntKntE',
-    apiKey: '',
-    token: '',
-  });
-  const params = convertApi.createParams();
-  params.add('File', pdfFile);
-  return await convertApi.convert('pdf', 'ocr', params);
+  const data = new FormData();
+  data.append('File', pdfFile);
+
+  const response = await fetch(
+    'https://v2.convertapi.com/convert/pdf/to/ocr?Secret=IY58j20e5lntKntE&StoreFile=true',
+    {
+      method: 'POST',
+      body: data,
+    }
+  );
+
+  return response.blob();
 }

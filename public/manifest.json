@@ -3,7 +3,7 @@
 
   "name": "Video to Slides",
   "description": "create slide images or a PDF from any YouTube Video (with OCR!)",
-  "version": "0.7",
+  "version": "0.8",
 
   "options_ui": {
     "page": "options.html"

@@ -1,8 +1,9 @@
 .btn {
-  min-width: min-content;
+  width: min-content !important;
 }
 
 .btn span {
   float: left;
   display: inline-flex;
+  margin: 0 5px;
 }

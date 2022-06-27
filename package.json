@@ -1,6 +1,6 @@
 {
   "name": "video-to-slides",
-  "version": "0.7",
+  "version": "0.8",
   "description": "Chrome extension for converting video to slides (or sequences of images)",
   "main": "index.js",
   "scripts": {
@@ -17,12 +17,16 @@
     "url": "https://github.com/Sejmou/video-to-slides.git"
   },
   "dependencies": {
+    "@emotion/react": "^11.9.3",
+    "@emotion/styled": "^11.9.3",
+    "@mui/material": "^5.8.5",
     "@types/jspdf": "^2.0.0",
     "@types/wicg-file-system-access": "^2020.9.5",
     "jspdf": "^2.5.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "tesseract.js": "^2.1.5"
+    "tesseract.js": "^2.1.5",
+    "use-chrome-storage": "^1.0.7"
   },
   "devDependencies": {
     "@types/chrome": "0.0.158",

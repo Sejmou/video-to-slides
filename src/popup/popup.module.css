@@ -4,8 +4,17 @@
   font: Roboto;
 }
 
+.heading {
+  white-space: nowrap;
+}
+
 .popup-container {
   padding: 0 8px;
-  min-width: 400px;
-  min-height: 200px;
+  min-width: min-content;
+  min-width: 280px;
+  min-height: 160px;
+}
+
+.formgroup {
+  white-space: nowrap;
 }

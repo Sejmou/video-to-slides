@@ -21,7 +21,8 @@
     "@types/wicg-file-system-access": "^2020.9.5",
     "jspdf": "^2.5.1",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "react-dom": "^17.0.1",
+    "tesseract.js": "^2.1.5"
   },
   "devDependencies": {
     "@types/chrome": "0.0.158",

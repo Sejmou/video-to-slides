@@ -12,7 +12,6 @@ const appContainer = document.createElement('div');
 document.body.appendChild(appContainer);
 
 const video = document.querySelector('video')!;
-const videoId = getURLQueryParams().v;
 let dirHandle: FileSystemDirectoryHandle | null;
 
 type AlertSeverity = 'error' | 'warning' | 'info' | 'success';
@@ -20,6 +19,7 @@ type SnackbarState = {
   open: boolean;
   message: string;
   severity: AlertSeverity;
+  autoHideDuration?: number;
 };
 
 const ContentPageApp = () => {
@@ -44,6 +44,7 @@ const ContentPageApp = () => {
   const onScreenshotClick = async () => {
     try {
       const dirHandle = await dirAccess();
+      const videoId = getURLQueryParams().v;
 
       const newFileHandle = await dirHandle.getFileHandle(
         `${videoId}_${video.currentTime.toFixed(0).padStart(5, '0')}.png`, // pad to make sure we can use alphabetical sorting to sort the files by timestamp
@@ -52,11 +53,7 @@ const ContentPageApp = () => {
 
       await storeVideoSnapshot(video, newFileHandle);
       const message = `Screenshot saved to '${dirHandle.name}' as '${newFileHandle.name}'`;
-      setSnackbarState(() => ({
-        open: true,
-        message,
-        severity: 'success',
-      }));
+      showMessage(message, 'success', 2500);
     } catch (error) {
       handleFileAccessErrors(error, 'Could not store screenshot');
     }
@@ -65,22 +62,36 @@ const ContentPageApp = () => {
   const onPdfGenClick = async () => {
     try {
       const dirHandle = await dirAccess();
+      const videoId = getURLQueryParams().v;
 
       showMessage(
-        `PDF generation started${
-          enableOCR ? ' (OCR enabled, this might take a while)' : ''
+        `Generating PDF from video screenshots in '${dirHandle.name}'${
+          enableOCR ? ' (OCR enabled, might take a while)' : ''
         }...`,
-        'info'
+        'info',
+        enableOCR ? 7000 : 4000
       );
 
       const imgFileHandles: FileSystemFileHandle[] = [];
 
       for await (const entry of dirHandle.values()) {
-        if (entry.kind == 'file' && entry.name.endsWith('.png')) {
+        if (
+          entry.kind == 'file' &&
+          entry.name.includes(videoId) &&
+          entry.name.endsWith('.png')
+        ) {
           imgFileHandles.push(await dirHandle.getFileHandle(entry.name));
         }
       }
       imgFileHandles.sort((a, b) => a.name.localeCompare(b.name));
+
+      if (imgFileHandles.length === 0) {
+        showMessage(
+          `Cannot generate PDF: No screenshot images for current video (id: ${videoId}) found!`,
+          'error'
+        );
+        return;
+      }
 
       const pdfFileName =
         document
@@ -132,11 +143,16 @@ const ContentPageApp = () => {
     </>
   );
 
-  const showMessage = (message: string, severity: AlertSeverity) =>
+  const showMessage = (
+    message: string,
+    severity: AlertSeverity,
+    autoHideDuration?: number
+  ) =>
     setSnackbarState(() => ({
       open: true,
       severity,
       message,
+      autoHideDuration,
     }));
 
   const handleFileAccessErrors = (error: unknown, failedActionDesc: string) => {
@@ -158,7 +174,7 @@ const ContentPageApp = () => {
       <Snackbar
         open={snackbarState.open}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        autoHideDuration={6000}
+        autoHideDuration={snackbarState.autoHideDuration || 4000}
         onClose={onSnackbarClose}
       >
         <SnackbarContent

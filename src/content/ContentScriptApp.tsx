@@ -1,51 +1,28 @@
 import React, { useState } from 'react';
-import ReactDOM, { createPortal } from 'react-dom';
+import ReactDOM from 'react-dom';
 import YouTubePlayerButton from './components/YouTubePlayerButton/YouTubePlayerButton';
 import { getURLQueryParams } from './util/url-queryparams';
 import { storeVideoSnapshot } from './util/video-to-image';
 import { createPdfFileFromImgFileHandles } from './util/images-to-pdf';
 import { useSettingsStore } from '../store';
-import { Snackbar, SnackbarContent } from '@mui/material';
+import { IconButton, Snackbar, SnackbarContent } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
-// issue: we need to inject the controls for the page in a certain place among the buttons of the YouTube Player
-// so we insert a "injection container" for the container with the actual buttons next to one of the existing buttons
-// it will be used by ReactDOM.render()
-const container = document.createElement('span');
-const subtitleButton = document.querySelector('.ytp-settings-button')!;
-subtitleButton.before(container);
-
-const snackbarContainerPortal = document.createElement('div');
-document.body.appendChild(snackbarContainerPortal);
-
-type SnackbarState = {
-  open: boolean;
-  message: string;
-  severity: 'error' | 'warning' | 'info' | 'success';
-};
-
-// the only reason this component is needed is that unnecessary styles would be applied on the Snackbar if it would be rendered without a portal
-// for instance, when used inside the ButtonContainer, styles from the YouTube player controlrs would also be applied
-// this caused the Snackbar to disappear as well whenever the player controls were hidden
-const SnackbarContainer = (props: { snackbarState: SnackbarState }) => {
-  const { snackbarState } = props;
-
-  return createPortal(
-    <Snackbar
-      open={snackbarState.open}
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      autoHideDuration={5000}
-    >
-      <SnackbarContent message={snackbarState.message} sx={{ fontSize: 14 }} />
-    </Snackbar>,
-    snackbarContainerPortal
-  );
-};
+const appContainer = document.createElement('div');
+document.body.appendChild(appContainer);
 
 const video = document.querySelector('video')!;
 const videoId = getURLQueryParams().v;
 let dirHandle: FileSystemDirectoryHandle | null;
 
-const ButtonContainer = () => {
+type AlertSeverity = 'error' | 'warning' | 'info' | 'success';
+type SnackbarState = {
+  open: boolean;
+  message: string;
+  severity: AlertSeverity;
+};
+
+const ContentPageApp = () => {
   const [settings] = useSettingsStore();
   const { enableOCR } = settings;
 
@@ -64,31 +41,7 @@ const ButtonContainer = () => {
     return dirHandle;
   };
 
-  const showMessage = (
-    message: string,
-    severity: 'error' | 'warning' | 'info' | 'success'
-  ) =>
-    setSnackbarState(() => ({
-      open: true,
-      severity,
-      message,
-    }));
-
-  const handleFileAccessErrors = (error: unknown, failedActionDesc: string) => {
-    let reasonDesc = 'Something went wrong :/';
-    if (error instanceof DOMException) {
-      if (error.name === 'AbortError') {
-        reasonDesc = 'Read permission required';
-      } else if (error.name === 'NotAllowedError') {
-        reasonDesc = 'Write permission required';
-      }
-    }
-    {
-      showMessage([failedActionDesc, reasonDesc].join(' - '), 'error');
-    }
-  };
-
-  const screenshotHandler = async () => {
+  const onScreenshotClick = async () => {
     try {
       const dirHandle = await dirAccess();
 
@@ -109,7 +62,7 @@ const ButtonContainer = () => {
     }
   };
 
-  const pdfGenHandler = async () => {
+  const onPdfGenClick = async () => {
     try {
       const dirHandle = await dirAccess();
 
@@ -159,18 +112,70 @@ const ButtonContainer = () => {
     }
   };
 
+  const onSnackbarClose = () =>
+    setSnackbarState(() => ({
+      open: false,
+      message: '',
+      severity: 'info',
+    }));
+
+  const snackbarAction = (
+    <>
+      <IconButton
+        aria-label="close"
+        color="inherit"
+        size="medium"
+        onClick={onSnackbarClose}
+      >
+        <CloseIcon sx={{ fontSize: 18 }} />
+      </IconButton>
+    </>
+  );
+
+  const showMessage = (message: string, severity: AlertSeverity) =>
+    setSnackbarState(() => ({
+      open: true,
+      severity,
+      message,
+    }));
+
+  const handleFileAccessErrors = (error: unknown, failedActionDesc: string) => {
+    let reasonDesc = 'Something went wrong :/';
+    if (error instanceof DOMException) {
+      if (error.name === 'AbortError') {
+        reasonDesc = 'Read permission required';
+      } else if (error.name === 'NotAllowedError') {
+        reasonDesc = 'Write permission required';
+      }
+    }
+    {
+      showMessage([failedActionDesc, reasonDesc].join(' - '), 'error');
+    }
+  };
+
   return (
     <>
-      <SnackbarContainer snackbarState={snackbarState} />
-      <YouTubePlayerButton label="Screenshot" onClick={screenshotHandler} />
-      <YouTubePlayerButton label="PDF" onClick={pdfGenHandler} />
+      <Snackbar
+        open={snackbarState.open}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        autoHideDuration={6000}
+        onClose={onSnackbarClose}
+      >
+        <SnackbarContent
+          message={snackbarState.message}
+          sx={{ fontSize: 14 }}
+          action={snackbarAction}
+        />
+      </Snackbar>
+      <YouTubePlayerButton label="Screenshot" onClick={onScreenshotClick} />
+      <YouTubePlayerButton label="PDF" onClick={onPdfGenClick} />
     </>
   );
 };
 
 ReactDOM.render(
   <React.StrictMode>
-    <ButtonContainer />
+    <ContentPageApp />
   </React.StrictMode>,
-  container
+  appContainer
 );

@@ -5,22 +5,17 @@ import { getURLQueryParams } from './util/url-queryparams';
 import { storeVideoSnapshot } from './util/video-to-image';
 import { createPdfFileFromImgFileHandles } from './util/images-to-pdf';
 import { useSettingsStore } from '../store';
-import { IconButton, Snackbar, SnackbarContent } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import {
+  InfoSnackbar,
+  SnackbarState,
+  AlertSeverity,
+} from './components/InfoSnackbar/InfoSnackbar';
 
 const appContainer = document.createElement('div');
 document.body.appendChild(appContainer);
 
 const video = document.querySelector('video')!;
 let dirHandle: FileSystemDirectoryHandle | null;
-
-type AlertSeverity = 'error' | 'warning' | 'info' | 'success';
-type SnackbarState = {
-  open: boolean;
-  message: string;
-  severity: AlertSeverity;
-  autoHideDuration?: number;
-};
 
 const ContentPageApp = () => {
   const [settings] = useSettingsStore();
@@ -130,19 +125,6 @@ const ContentPageApp = () => {
       severity: 'info',
     }));
 
-  const snackbarAction = (
-    <>
-      <IconButton
-        aria-label="close"
-        color="inherit"
-        size="medium"
-        onClick={onSnackbarClose}
-      >
-        <CloseIcon sx={{ fontSize: 18 }} />
-      </IconButton>
-    </>
-  );
-
   const showMessage = (
     message: string,
     severity: AlertSeverity,
@@ -171,18 +153,7 @@ const ContentPageApp = () => {
 
   return (
     <>
-      <Snackbar
-        open={snackbarState.open}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        autoHideDuration={snackbarState.autoHideDuration || 4000}
-        onClose={onSnackbarClose}
-      >
-        <SnackbarContent
-          message={snackbarState.message}
-          sx={{ fontSize: 14 }}
-          action={snackbarAction}
-        />
-      </Snackbar>
+      <InfoSnackbar snackbarState={snackbarState} onClose={onSnackbarClose} />
       <YouTubePlayerButton label="Screenshot" onClick={onScreenshotClick} />
       <YouTubePlayerButton label="PDF" onClick={onPdfGenClick} />
     </>

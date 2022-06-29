@@ -32,7 +32,7 @@ const Popup = () => {
         <Tooltip
           enterDelay={700}
           enterNextDelay={700}
-          title="makes PDF searchable, creation may take long"
+          title="Detects text in video screenshots and makes PDF searchable - PDF generation may take significantly longer"
         >
           <FormControlLabel
             control={
@@ -41,7 +41,7 @@ const Popup = () => {
                 onChange={ev => handleChange('enableOCR', ev.target.checked)}
               />
             }
-            label="process images with OCR"
+            label="text recogniction"
           />
         </Tooltip>
       </FormGroup>

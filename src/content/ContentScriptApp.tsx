@@ -66,7 +66,7 @@ const ContentPageApp = () => {
 
       showMessage(
         `Generating PDF from video screenshots in '${dirHandle.name}'${
-          enableOCR ? ' (OCR enabled, might take a while)' : ''
+          enableOCR ? ' (using text recognition, might take a while)' : ''
         }...`,
         'info',
         enableOCR ? 7000 : 4000

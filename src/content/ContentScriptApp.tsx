@@ -11,6 +11,8 @@ import {
   AlertSeverity,
 } from './components/InfoSnackbar/InfoSnackbar';
 
+console.log('[Video to Slides] loading content script app');
+
 const appContainer = document.createElement('div');
 document.body.appendChild(appContainer);
 

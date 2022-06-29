@@ -2,8 +2,8 @@
   "manifest_version": 3,
 
   "name": "Video to Slides",
-  "description": "create slide images or a PDF from any YouTube Video (with OCR!)",
-  "version": "0.8.5",
+  "description": "create slide images or a PDF from any YouTube Video (optionally with text recognition!)",
+  "version": "0.9",
 
   "options_ui": {
     "page": "options.html"

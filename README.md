@@ -2,6 +2,12 @@
 
 This Chrome extension allows you to take screenshots of any given YouTube video and generate a PDF from them (optionally also with text recognition, creating a searchable PDF). The screenshots and PDF are stored in any folder of your choice.
 
+You can also use keyboard shortcuts:
+
+<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd>: Save Screenshot
+<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>C</kbd>: Create PDF
+<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>D</kbd>: Change Directory used for screenshots and PDF generation
+
 ## Installation
 
 As this Chrome Extension has not been published in the Chrome Store, you need to clone its repo (or download the code) and install it in developer mode.

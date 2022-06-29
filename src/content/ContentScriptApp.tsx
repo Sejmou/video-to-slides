@@ -4,23 +4,27 @@ import YouTubePlayerButton from './components/YouTubePlayerButton/YouTubePlayerB
 import { getURLQueryParams } from './util/url-queryparams';
 import { storeVideoSnapshot } from './util/video-to-image';
 import { createPdfFileFromImgFileHandles } from './util/images-to-pdf';
-import { useSettingsStore } from '../store';
+import { Settings, useSettingsStore } from '../store';
 import {
   InfoSnackbar,
   SnackbarState,
   AlertSeverity,
 } from './components/InfoSnackbar/InfoSnackbar';
+import { KeyboardShortcut, KeyboardShortcuts } from '../keyboard-shortcuts';
 
 console.log('[Video to Slides] loading content script app');
 
 const appContainer = document.createElement('div');
 document.body.appendChild(appContainer);
 
-const video = document.querySelector('video')!;
 let dirHandle: FileSystemDirectoryHandle | null;
 
+const keyboardShortcuts = new KeyboardShortcuts();
+
 const ContentPageApp = () => {
-  const [settings] = useSettingsStore();
+  const [settingsAny] = useSettingsStore();
+  // TODO: figure out smarter way to get type information
+  const settings = settingsAny as Settings;
   const { enableOCR } = settings;
 
   const [snackbarState, setSnackbarState] = useState<SnackbarState>({
@@ -29,19 +33,23 @@ const ContentPageApp = () => {
     severity: 'info',
   });
 
+  const video = document.querySelector('video');
+
   const dirAccess = async () => {
     if (!dirHandle) {
-      video.pause();
+      video?.pause();
       dirHandle = await window.showDirectoryPicker();
       return dirHandle;
     }
     return dirHandle;
   };
 
-  const onScreenshotClick = async () => {
+  const onTakeScreenshot = async () => {
     try {
       const dirHandle = await dirAccess();
       const videoId = getURLQueryParams().v;
+      if (!videoId) return;
+      if (!video) return;
 
       const newFileHandle = await dirHandle.getFileHandle(
         `${videoId}_${video.currentTime.toFixed(0).padStart(5, '0')}.png`, // pad to make sure we can use alphabetical sorting to sort the files by timestamp
@@ -52,14 +60,17 @@ const ContentPageApp = () => {
       const message = `Screenshot saved to '${dirHandle.name}' as '${newFileHandle.name}'`;
       showMessage(message, 'success', 2500);
     } catch (error) {
-      handleFileAccessErrors(error, 'Could not store screenshot');
+      handleFileAccessErrors(error, 'Could not save video screenshot');
     }
   };
 
-  const onPdfGenClick = async () => {
+  const onCreatePdf = async () => {
     try {
-      const dirHandle = await dirAccess();
       const videoId = getURLQueryParams().v;
+      if (!videoId) {
+        return;
+      }
+      const dirHandle = await dirAccess();
 
       showMessage(
         `Generating PDF from video screenshots in '${dirHandle.name}'${
@@ -120,6 +131,21 @@ const ContentPageApp = () => {
     }
   };
 
+  const onChangeSaveDirectory = async () => {
+    console.log('on change save');
+    dirHandle = await window.showDirectoryPicker();
+  };
+
+  keyboardShortcuts.setShortcuts([
+    new KeyboardShortcut(settings.createPdfKeyComboKeys, () => onCreatePdf()),
+    new KeyboardShortcut(settings.screenshotKeyComboKeys, () =>
+      onTakeScreenshot()
+    ),
+    new KeyboardShortcut(settings.changeSaveDirectoryKeyComboKeys, () =>
+      onChangeSaveDirectory()
+    ),
+  ]);
+
   const onSnackbarClose = () =>
     setSnackbarState(() => ({
       open: false,
@@ -156,8 +182,8 @@ const ContentPageApp = () => {
   return (
     <>
       <InfoSnackbar snackbarState={snackbarState} onClose={onSnackbarClose} />
-      <YouTubePlayerButton label="Screenshot" onClick={onScreenshotClick} />
-      <YouTubePlayerButton label="PDF" onClick={onPdfGenClick} />
+      <YouTubePlayerButton label="Screenshot" onClick={onTakeScreenshot} />
+      <YouTubePlayerButton label="PDF" onClick={onCreatePdf} />
     </>
   );
 };

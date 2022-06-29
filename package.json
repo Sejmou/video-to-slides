@@ -1,6 +1,6 @@
 {
   "name": "video-to-slides",
-  "version": "0.8.5",
+  "version": "0.9.2",
   "description": "Chrome extension for converting video to slides (or sequences of images)",
   "main": "index.js",
   "scripts": {

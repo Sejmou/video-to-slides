@@ -9,13 +9,13 @@
   min-width: min-content;
   min-width: 280px;
   min-height: 160px;
-  margin-bottom: 100px;
 }
 
 .heading-container {
   display: flex;
   gap: 10px;
   white-space: nowrap;
+  margin-bottom: 1em;
 }
 
 .heading-container img {
@@ -24,4 +24,11 @@
 
 .form-group {
   white-space: nowrap;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2em;
+  padding: 0.5em 1em;
 }

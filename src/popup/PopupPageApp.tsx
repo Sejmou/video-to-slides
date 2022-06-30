@@ -4,13 +4,16 @@ import styles from './popup.module.css';
 import {
   Switch,
   FormControlLabel,
-  FormLabel,
   FormGroup,
   Tooltip,
   Button,
   FormHelperText,
-  Box,
   TextField,
+  FormControl,
+  Card,
+  Typography,
+  createTheme,
+  ThemeProvider,
 } from '@mui/material';
 import { useSettingsStore } from '../shared/store';
 import {
@@ -19,11 +22,13 @@ import {
   MessageTypes,
   sendMessageToContentScript,
 } from '../shared/script-communication';
-// import {
-//   sendDirectoryChangeRequest,
-//   sendCurrentDirectoryRequest,
-//   directoryChangeStream,
-// } from '../script-messaging';
+import { red } from '@mui/material/colors';
+
+const theme = createTheme({
+  palette: {
+    primary: red,
+  },
+});
 
 const Popup = () => {
   const [settings, setSettings, isPersistent, error] = useSettingsStore();
@@ -38,10 +43,6 @@ const Popup = () => {
     });
     sendMessageToContentScript({ type: MessageTypes.currentDirectoryQuery });
   }, []);
-
-  // useEffect(() => {
-  //   sendCurrentDirectoryRequest();
-  // }, []);
 
   // const onChangeDirectoryClick = () => sendDirectoryChangeRequest();
   const onChangeDirectoryClick = () =>
@@ -58,60 +59,58 @@ const Popup = () => {
   };
 
   return (
-    <div className={styles['popup-container']}>
-      <div className={styles['heading-container']}>
-        <img src="icons/icon32.png" alt="Video to Slides Icon" />
-        <h1>Video to Slides Config</h1>
-      </div>
-
-      <FormGroup className={styles['form-group']}>
-        <FormLabel>Directory</FormLabel>
-        <TextField
-          defaultValue={dirName ? dirName : 'Not selected'}
-          variant="outlined"
-          helperText="The directory used for storing screenshots and PDF generation"
-          InputProps={{
-            endAdornment: (
-              <Button
-                onClick={onChangeDirectoryClick}
-                variant="contained"
-                sx={{ marginLeft: 10 }}
-              >
-                {dirName ? 'Change' : 'Select'}
-              </Button>
-            ),
-            readOnly: true,
-          }}
-        />
-        <FormLabel>PDF generation</FormLabel>
-        <div>
-          <Tooltip
-            enterDelay={700}
-            enterNextDelay={700}
-            title="PDF generation may take significantly longer"
-          >
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={settings.enableOCR}
-                  onChange={ev => handleChange('enableOCR', ev.target.checked)}
-                />
-              }
-              label="text recognition"
-            />
-          </Tooltip>
-          <Tooltip
-            enterDelay={700}
-            enterNextDelay={700}
-            title="PDF generation may take significantly longer"
-          >
-            <FormHelperText>
-              Detect text in video screenshots (makes PDF searchable)
-            </FormHelperText>
-          </Tooltip>
+    <ThemeProvider theme={theme}>
+      <div className={styles['popup-container']}>
+        <div className={styles['heading-container']}>
+          <img src="icons/icon32.png" alt="Video to Slides Icon" />
+          <Typography variant="h4">Video to Slides Config</Typography>
         </div>
-      </FormGroup>
-    </div>
+
+        <FormGroup className={styles['form-group']}>
+          <Card className={styles.card}>
+            <Typography variant="h5">Directory</Typography>
+            <TextField
+              defaultValue={dirName ? dirName : 'Not selected'}
+              variant="outlined"
+              helperText="The directory used for storing screenshots and PDF generation"
+              InputProps={{
+                endAdornment: (
+                  <Button onClick={onChangeDirectoryClick} variant="contained">
+                    {dirName ? 'Change' : 'Select'}
+                  </Button>
+                ),
+                readOnly: true,
+              }}
+            />
+          </Card>
+          <Card className={styles.card}>
+            <Typography variant="h5">PDF generation</Typography>
+            <Tooltip
+              enterDelay={700}
+              enterNextDelay={700}
+              title="PDF generation may take significantly longer"
+            >
+              <FormControl>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={settings.enableOCR}
+                      onChange={ev =>
+                        handleChange('enableOCR', ev.target.checked)
+                      }
+                    />
+                  }
+                  label="text recognition"
+                />
+                <FormHelperText>
+                  Detect text in video screenshots (makes PDF searchable)
+                </FormHelperText>
+              </FormControl>
+            </Tooltip>
+          </Card>
+        </FormGroup>
+      </div>
+    </ThemeProvider>
   );
 };
 

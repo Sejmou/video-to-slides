@@ -10,6 +10,21 @@ import {
 } from '@mui/material';
 import { useSettingsStore } from '../store';
 
+function popup() {
+  chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
+    const activeTab = tabs[0];
+    if (activeTab.id) {
+      chrome.tabs.sendMessage(activeTab.id, {
+        message: 'hello',
+      });
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  popup();
+});
+
 const Popup = () => {
   const [settings, setSettings, isPersistent, error] = useSettingsStore();
   console.log('settings', settings);

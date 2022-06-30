@@ -14,6 +14,16 @@ import { KeyboardShortcut, KeyboardShortcuts } from '../keyboard-shortcuts';
 
 console.log('[Video to Slides] loading content script app');
 
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.message === 'hello') {
+    helloReceived();
+  }
+});
+
+function helloReceived() {
+  console.log('received hello');
+}
+
 const appContainer = document.createElement('div');
 document.body.appendChild(appContainer);
 

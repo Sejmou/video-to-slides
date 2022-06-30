@@ -1,28 +1,28 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import YouTubePlayerButton from './components/YouTubePlayerButton/YouTubePlayerButton';
 import { getURLQueryParams } from './util/url-queryparams';
 import { storeVideoSnapshot } from './util/video-to-image';
 import { createPdfFileFromImgFileHandles } from './util/images-to-pdf';
-import { Settings, useSettingsStore } from '../store';
+import { Settings, useSettingsStore } from '../shared/store';
 import {
   InfoSnackbar,
   SnackbarState,
   AlertSeverity,
 } from './components/InfoSnackbar/InfoSnackbar';
-import { KeyboardShortcut, KeyboardShortcuts } from '../keyboard-shortcuts';
+import {
+  KeyboardShortcut,
+  KeyboardShortcuts,
+} from '../shared/keyboard-shortcuts';
+import {
+  addMessageListener,
+  isCurrentDirectoryQuery,
+  isDirectoryChangeRequest,
+  MessageTypes,
+  sendMessageToPopupScript,
+} from '../shared/script-communication';
 
 console.log('[Video to Slides] loading content script app');
-
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  if (request.message === 'hello') {
-    helloReceived();
-  }
-});
-
-function helloReceived() {
-  console.log('received hello');
-}
 
 const appContainer = document.createElement('div');
 document.body.appendChild(appContainer);
@@ -145,6 +145,20 @@ const ContentPageApp = () => {
     console.log('on change save');
     dirHandle = await window.showDirectoryPicker();
   };
+
+  // add listener only on component mount, not on every render.
+  useEffect(() => {
+    addMessageListener(message => {
+      if (isDirectoryChangeRequest(message)) {
+        onChangeSaveDirectory();
+      } else if (isCurrentDirectoryQuery(message)) {
+        sendMessageToPopupScript({
+          type: MessageTypes.directoryResponse,
+          dirName: dirHandle?.name || '',
+        });
+      }
+    });
+  }, []);
 
   keyboardShortcuts.setShortcuts([
     new KeyboardShortcut(settings.createPdfKeyComboKeys, () => onCreatePdf()),

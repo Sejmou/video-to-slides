@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import styles from './popup.module.css';
 import {
@@ -7,27 +7,45 @@ import {
   FormLabel,
   FormGroup,
   Tooltip,
+  Button,
+  FormHelperText,
+  Box,
+  TextField,
 } from '@mui/material';
-import { useSettingsStore } from '../store';
-
-function popup() {
-  chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
-    const activeTab = tabs[0];
-    if (activeTab.id) {
-      chrome.tabs.sendMessage(activeTab.id, {
-        message: 'hello',
-      });
-    }
-  });
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-  popup();
-});
+import { useSettingsStore } from '../shared/store';
+import {
+  addMessageListener,
+  isDirectoryChange,
+  MessageTypes,
+  sendMessageToContentScript,
+} from '../shared/script-communication';
+// import {
+//   sendDirectoryChangeRequest,
+//   sendCurrentDirectoryRequest,
+//   directoryChangeStream,
+// } from '../script-messaging';
 
 const Popup = () => {
   const [settings, setSettings, isPersistent, error] = useSettingsStore();
-  console.log('settings', settings);
+  const [dirName, setdirName] = useState<string>('');
+
+  // Create the subscription to directoryChangeResponseStream on component mount, not on every render.
+  useEffect(() => {
+    addMessageListener(message => {
+      if (isDirectoryChange(message)) {
+        setdirName(() => message.dirName);
+      }
+    });
+    sendMessageToContentScript({ type: MessageTypes.currentDirectoryQuery });
+  }, []);
+
+  // useEffect(() => {
+  //   sendCurrentDirectoryRequest();
+  // }, []);
+
+  // const onChangeDirectoryClick = () => sendDirectoryChangeRequest();
+  const onChangeDirectoryClick = () =>
+    sendMessageToContentScript({ type: MessageTypes.directoryChangeRequest });
 
   // TODO: figure out smarter way to solve this with TypeScript support
   const handleChange = (propName: string, value: any) => {
@@ -47,22 +65,51 @@ const Popup = () => {
       </div>
 
       <FormGroup className={styles['form-group']}>
+        <FormLabel>Directory</FormLabel>
+        <TextField
+          defaultValue={dirName ? dirName : 'Not selected'}
+          variant="outlined"
+          helperText="The directory used for storing screenshots and PDF generation"
+          InputProps={{
+            endAdornment: (
+              <Button
+                onClick={onChangeDirectoryClick}
+                variant="contained"
+                sx={{ marginLeft: 10 }}
+              >
+                {dirName ? 'Change' : 'Select'}
+              </Button>
+            ),
+            readOnly: true,
+          }}
+        />
         <FormLabel>PDF generation</FormLabel>
-        <Tooltip
-          enterDelay={700}
-          enterNextDelay={700}
-          title="Detects text in video screenshots and makes PDF searchable - PDF generation may take significantly longer"
-        >
-          <FormControlLabel
-            control={
-              <Switch
-                checked={settings.enableOCR}
-                onChange={ev => handleChange('enableOCR', ev.target.checked)}
-              />
-            }
-            label="text recogniction"
-          />
-        </Tooltip>
+        <div>
+          <Tooltip
+            enterDelay={700}
+            enterNextDelay={700}
+            title="PDF generation may take significantly longer"
+          >
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={settings.enableOCR}
+                  onChange={ev => handleChange('enableOCR', ev.target.checked)}
+                />
+              }
+              label="text recognition"
+            />
+          </Tooltip>
+          <Tooltip
+            enterDelay={700}
+            enterNextDelay={700}
+            title="PDF generation may take significantly longer"
+          >
+            <FormHelperText>
+              Detect text in video screenshots (makes PDF searchable)
+            </FormHelperText>
+          </Tooltip>
+        </div>
       </FormGroup>
     </div>
   );

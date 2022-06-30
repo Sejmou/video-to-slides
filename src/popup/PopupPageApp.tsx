@@ -23,6 +23,8 @@ import {
   sendMessageToContentScript,
 } from '../shared/script-communication';
 import { red } from '@mui/material/colors';
+import SwitchInput from './components/SwitchInput/SwitchInput';
+import PickerInput from './components/PickerInput/PickerInput';
 
 const theme = createTheme({
   palette: {
@@ -69,44 +71,22 @@ const Popup = () => {
         <FormGroup className={styles['form-group']}>
           <Card className={styles.card}>
             <Typography variant="h5">Directory</Typography>
-            <TextField
-              defaultValue={dirName ? dirName : 'Not selected'}
-              variant="outlined"
+            <PickerInput
+              value={dirName ? dirName : 'Not selected'}
+              buttonLabel={dirName ? 'Change' : 'Select'}
               helperText="The directory used for storing screenshots and PDF generation"
-              InputProps={{
-                endAdornment: (
-                  <Button onClick={onChangeDirectoryClick} variant="contained">
-                    {dirName ? 'Change' : 'Select'}
-                  </Button>
-                ),
-                readOnly: true,
-              }}
+              onClick={onChangeDirectoryClick}
             />
           </Card>
           <Card className={styles.card}>
             <Typography variant="h5">PDF generation</Typography>
-            <Tooltip
-              enterDelay={700}
-              enterNextDelay={700}
-              title="PDF generation may take significantly longer"
-            >
-              <FormControl>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={settings.enableOCR}
-                      onChange={ev =>
-                        handleChange('enableOCR', ev.target.checked)
-                      }
-                    />
-                  }
-                  label="text recognition"
-                />
-                <FormHelperText>
-                  Detect text in video screenshots (makes PDF searchable)
-                </FormHelperText>
-              </FormControl>
-            </Tooltip>
+            <SwitchInput
+              checked={settings.enableOCR}
+              onChange={ev => handleChange('enableOCR', ev.target.checked)}
+              tooltipText="PDF generation may take significantly longer"
+              helperText="Detect text in video screenshots (makes PDF searchable)"
+              label="text recognition"
+            />
           </Card>
         </FormGroup>
       </div>

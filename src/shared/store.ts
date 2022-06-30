@@ -13,6 +13,13 @@ export interface Settings {
   changeSaveDirectoryKeyComboKeys: KeyComboKeys;
 }
 
+export type ShortcutKeyCombos = Pick<
+  Settings,
+  | 'changeSaveDirectoryKeyComboKeys'
+  | 'createPdfKeyComboKeys'
+  | 'screenshotKeyComboKeys'
+>;
+
 const defaultCreatePdfKeyComboKeys: KeyComboKeys = {
   code: 'KeyC',
   shiftKey: true,

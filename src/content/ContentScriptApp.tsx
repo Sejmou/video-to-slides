@@ -18,7 +18,10 @@ import {
   addMessageListener,
   isCurrentDirectoryQuery,
   isDirectoryChangeRequest,
+  isShortcutUpdate,
+  MessageBase,
   MessageTypes,
+  removeMessageListener,
   sendMessageToPopupScript,
 } from '../shared/script-communication';
 
@@ -146,9 +149,23 @@ const ContentPageApp = () => {
     dirHandle = await window.showDirectoryPicker();
   };
 
+  const setKeyboardShortcuts = () =>
+    keyboardShortcuts.setShortcuts([
+      new KeyboardShortcut(settings.createPdfKeyComboKeys, () => onCreatePdf()),
+      new KeyboardShortcut(settings.screenshotKeyComboKeys, () =>
+        onTakeScreenshot()
+      ),
+      new KeyboardShortcut(settings.changeSaveDirectoryKeyComboKeys, () =>
+        onChangeSaveDirectory()
+      ),
+    ]);
+
+  setKeyboardShortcuts();
+
   // add listener only on component mount, not on every render.
   useEffect(() => {
-    addMessageListener(message => {
+    const messageListener = (message: MessageBase) => {
+      console.log('received message', message);
       if (isDirectoryChangeRequest(message)) {
         onChangeSaveDirectory();
       } else if (isCurrentDirectoryQuery(message)) {
@@ -156,19 +173,13 @@ const ContentPageApp = () => {
           type: MessageTypes.directoryResponse,
           dirName: dirHandle?.name || '',
         });
+      } else if (isShortcutUpdate(message)) {
+        setKeyboardShortcuts();
       }
-    });
+    };
+    addMessageListener(messageListener);
+    return () => removeMessageListener(messageListener);
   }, []);
-
-  keyboardShortcuts.setShortcuts([
-    new KeyboardShortcut(settings.createPdfKeyComboKeys, () => onCreatePdf()),
-    new KeyboardShortcut(settings.screenshotKeyComboKeys, () =>
-      onTakeScreenshot()
-    ),
-    new KeyboardShortcut(settings.changeSaveDirectoryKeyComboKeys, () =>
-      onChangeSaveDirectory()
-    ),
-  ]);
 
   const onSnackbarClose = () =>
     setSnackbarState(() => ({

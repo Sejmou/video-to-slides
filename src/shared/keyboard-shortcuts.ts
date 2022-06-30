@@ -99,3 +99,31 @@ export class KeyboardShortcuts {
     this.shortcuts = newShortcuts;
   }
 }
+
+export function keyComboKeysAsString(keyCombo: KeyComboKeys) {
+  const { ctrlKey, shiftKey, altKey, metaKey, code } = keyCombo;
+  return [
+    ctrlKey ? 'Ctrl' : '',
+    shiftKey ? 'Shift' : '',
+    altKey ? 'Alt' : '',
+    metaKey ? getMetaKeyName() : '',
+    code ? code.replace('Key', '') : '',
+  ]
+    .filter(str => !!str)
+    .join(' + ');
+}
+
+function getMetaKeyName() {
+  const OS = getOS();
+  if (OS === 'Windows') return 'Win';
+  if (OS === 'MacOS') return 'Cmd';
+  if (OS === 'Linux') return 'Super';
+  return 'Meta';
+}
+
+function getOS() {
+  if (navigator.userAgent.indexOf('Win') != -1) return 'Windows';
+  if (navigator.userAgent.indexOf('Mac') != -1) return 'MacOS';
+  if (navigator.userAgent.indexOf('Linux') != -1) return 'Linux';
+  return 'Other';
+}

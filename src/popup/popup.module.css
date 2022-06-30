@@ -7,8 +7,6 @@
 .popup-container {
   padding: 0 8px;
   min-width: min-content;
-  min-width: 280px;
-  min-height: 160px;
 }
 
 .heading-container {
@@ -31,4 +29,10 @@
   flex-direction: column;
   margin-bottom: 2em;
   padding: 0.5em 1em;
+}
+
+.shortcut-picker-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }

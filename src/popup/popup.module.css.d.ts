@@ -5,6 +5,7 @@ interface CssExports {
   'form-group': string;
   'heading-container': string;
   'popup-container': string;
+  'shortcut-picker-container': string;
 }
 export const cssExports: CssExports;
 export default cssExports;

@@ -8,6 +8,8 @@ You can also use keyboard shortcuts:
 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>C</kbd>: Create PDF
 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>D</kbd>: Change Directory used for screenshots and PDF generation
 
+Those are only the defaults, you can define other shortcuts via the Extension config (accessible by clicking the extension from the extensions list or, if you have pinned the extension, by clicking extension icon in the toolbar)
+
 ## Installation
 
 As this Chrome Extension has not been published in the Chrome Store, you need to clone its repo (or download the code) and install it in developer mode.

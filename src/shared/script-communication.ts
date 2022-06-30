@@ -1,4 +1,7 @@
-interface MessageBase {
+import { Message } from '@mui/icons-material';
+import { Settings, ShortcutKeyCombos } from './store';
+
+export interface MessageBase {
   type: MessageTypes;
 }
 
@@ -15,6 +18,11 @@ export interface DirectoryChange extends MessageBase {
   dirName: string;
 }
 
+export interface ShortcutUpdate extends MessageBase {
+  type: typeof MessageTypes.shortcutUpdate;
+  shortcuts: ShortcutKeyCombos;
+}
+
 // When adding new message types...
 
 // declare message type names here ...
@@ -22,6 +30,7 @@ export enum MessageTypes {
   directoryChangeRequest = 'directory change request',
   currentDirectoryQuery = 'current directory query',
   directoryResponse = 'directory response',
+  shortcutUpdate = 'update shortcuts',
 }
 
 // ...and add them to this array as well
@@ -29,10 +38,15 @@ const MESSAGETYPE_NAMES = [
   MessageTypes.directoryChangeRequest,
   MessageTypes.directoryResponse,
   MessageTypes.currentDirectoryQuery,
+  MessageTypes.shortcutUpdate,
 ] as const;
 
 // Also update this when adding new message types...
-type Message = DirectoryChange | DirectoryChangeRequest | CurrentDirectoryQuery;
+type Message =
+  | DirectoryChange
+  | DirectoryChangeRequest
+  | CurrentDirectoryQuery
+  | ShortcutUpdate;
 
 // ...and add a type guard
 export function isDirectoryChangeRequest(
@@ -51,6 +65,12 @@ export function isCurrentDirectoryQuery(
   message: MessageBase
 ): message is CurrentDirectoryQuery {
   return message.type === MessageTypes.currentDirectoryQuery;
+}
+
+export function isShortcutUpdate(
+  message: MessageBase
+): message is ShortcutUpdate {
+  return message.type === MessageTypes.shortcutUpdate;
 }
 
 function isMessage(input: any): input is MessageBase {

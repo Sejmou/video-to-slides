@@ -26,8 +26,12 @@ const Popup = () => {
 
   return (
     <div className={styles['popup-container']}>
-      <h1 className={styles.heading}>Video to Slides Config</h1>
-      <FormGroup className={styles.formgroup}>
+      <div className={styles['heading-container']}>
+        <img src="icons/icon32.png" alt="Video to Slides Icon" />
+        <h1>Video to Slides Config</h1>
+      </div>
+
+      <FormGroup className={styles['form-group']}>
         <FormLabel>PDF generation</FormLabel>
         <Tooltip
           enterDelay={700}

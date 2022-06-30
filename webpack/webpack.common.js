@@ -13,8 +13,9 @@ module.exports = {
     content_script: path.join(srcDir, 'content/ContentScriptApp.tsx'),
   },
   output: {
-    path: path.join(__dirname, '../dist/js'),
-    filename: '[name].js',
+    path: path.join(__dirname, '../dist'),
+    filename: 'js/[name].js',
+    clean: true, // remove files in dist created in previous builds
   },
   optimization: {
     splitChunks: {
@@ -48,7 +49,10 @@ module.exports = {
   },
   plugins: [
     new CopyPlugin({
-      patterns: [{ from: '.', to: '../', context: 'public' }],
+      patterns: [
+        { from: 'public' }, // note: to is relative to output path!
+        { from: 'icons/*.png', context: 'icon' },
+      ],
       options: {},
     }),
   ],

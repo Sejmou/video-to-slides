@@ -4,10 +4,6 @@
   font: Roboto;
 }
 
-.heading {
-  white-space: nowrap;
-}
-
 .popup-container {
   padding: 0 8px;
   min-width: min-content;
@@ -15,6 +11,16 @@
   min-height: 160px;
 }
 
-.formgroup {
+.heading-container {
+  display: flex;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.heading-container img {
+  object-fit: scale-down;
+}
+
+.form-group {
   white-space: nowrap;
 }

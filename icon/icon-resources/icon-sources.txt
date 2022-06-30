@@ -1,0 +1,5 @@
+The icon of this Chrome extension uses the following icons created by others:
+camera icon: https://iconscout.com/icon/camera-3313168, created by Mada Creative (https://iconscout.com/contributors/gajah-mada-studio)
+PDF icon: https://publicdomainvectors.org/de/kostenlose-vektorgrafiken/PDF-Symbol/53754.html
+
+The rest of the icon was created by myself

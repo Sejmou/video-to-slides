@@ -2,14 +2,6 @@
 
 This Chrome extension allows you to take screenshots of any given YouTube video and generate a PDF from them (optionally also with text recognition, creating a searchable PDF). The screenshots and PDF are stored in any folder of your choice.
 
-You can also use keyboard shortcuts:
-
-<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd>: Save Screenshot
-<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>C</kbd>: Create PDF
-<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>D</kbd>: Change Directory used for screenshots and PDF generation
-
-Those are only the defaults, you can define other shortcuts via the Extension config (accessible by clicking the extension from the extensions list or, if you have pinned the extension, by clicking extension icon in the toolbar)
-
 ## Installation
 
 As this Chrome Extension has not been published in the Chrome Store, you need to clone its repo (or download the code) and install it in developer mode.
@@ -23,11 +15,23 @@ Instructions:
 5. Click on `Load unpacked`
 6. Choose the `dist` subfolder of this project (should contain the project build from step 2)
 
-## Development info
+## Configuration
+The extension is configurable via the config popup (accessible by clicking the extension from the extensions list or, if you have pinned the extension, by clicking the extension icon in the toolbar). There, 
+
+### Keyboard shortcuts
+You can also define keyboard shortcuts for some actions. The table below shows the default keybindings (they can be changed via the Extension config):
+
+| Shortcut                                                    | Action                                              |
+|-------------------------------------------------------------|-----------------------------------------------------|
+| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd>           | Save screenshot                                     |
+| <kbd> Ctrl </kbd>  +  <kbd> Shift </kbd>  +  <kbd> C </kbd> | Create PDF                                          |
+| <kbd> Ctrl </kbd>  +  <kbd> Shift </kbd>  +  <kbd> D </kbd> | Change directory for screenshots and PDF generation |
+
+## Technical details
 
 ### "Tech Stack" Overview
 
-This Chrome extension is written in Typescript. React is used for the content script and popup page. The production/development build pipeline is implemented using webpack. The project was built on top of [this](https://github.com/chibat/chrome-extension-typescript-starter) starter template. Testing with Jest would theoretically also be possible but no tests are implemented.
+This Chrome extension is written in Typescript. React is used for the content script and popup page. The production/development build pipeline is implemented using webpack. The project was built on top of [this](https://github.com/chibat/chrome-extension-typescript-starter) starter template. Testing with Jest would theoretically also be possible but no special tests are implemented.
 
 PDFs are generated with [jspdf](https://parall.ax/products/jspdf). For OCR, [tessseract.js](https://tesseract.projectnaptha.com/) was used. Many added UI components rely on [React Material UI](https://mui.com/). [use-chrome-storage](https://github.com/onikienko/use-chrome-storage) made accessing Chrome storage from React quite convenient.
 

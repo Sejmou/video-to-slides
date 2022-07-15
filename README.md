@@ -9,23 +9,25 @@ As this Chrome Extension has not been published in the Chrome Store, you need to
 Instructions:
 
 1. Get the code (by cloning this repo or downloading and unzipping)
-2. Install the project's dependencies + build the project by running `npm install` and `npm build` (For this, Node.js has to be installed on your system!)
+2. Install the project's dependencies + build the project by running `npm install` and `npm run build` (For this, Node.js has to be installed on your system!)
 3. Go to `chrome://extensions`
 4. Make sure Developer mode is on (switch in the upper-right corner)
 5. Click on `Load unpacked`
 6. Choose the `dist` subfolder of this project (should contain the project build from step 2)
 
 ## Configuration
-The extension is configurable via the config popup (accessible by clicking the extension from the extensions list or, if you have pinned the extension, by clicking the extension icon in the toolbar). There, 
+
+The extension is configurable via the config popup (accessible by clicking the extension from the extensions list or, if you have pinned the extension, by clicking the extension icon in the toolbar). There,
 
 ### Keyboard shortcuts
+
 You can also define keyboard shortcuts for some actions. The table below shows the default keybindings (they can be changed via the Extension config):
 
-| Shortcut                                                    | Action                                              |
-|-------------------------------------------------------------|-----------------------------------------------------|
-| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd>           | Save screenshot                                     |
-| <kbd> Ctrl </kbd>  +  <kbd> Shift </kbd>  +  <kbd> C </kbd> | Create PDF                                          |
-| <kbd> Ctrl </kbd>  +  <kbd> Shift </kbd>  +  <kbd> D </kbd> | Change directory for screenshots and PDF generation |
+| Shortcut                                                | Action                                              |
+| ------------------------------------------------------- | --------------------------------------------------- |
+| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd>       | Save screenshot                                     |
+| <kbd> Ctrl </kbd> + <kbd> Shift </kbd> + <kbd> C </kbd> | Create PDF                                          |
+| <kbd> Ctrl </kbd> + <kbd> Shift </kbd> + <kbd> D </kbd> | Change directory for screenshots and PDF generation |
 
 ## Technical details
 

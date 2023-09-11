@@ -8,6 +8,7 @@ const SETTINGS_KEY = 'settings';
 
 export interface Settings {
   enableOCR: boolean;
+  screenshotsToClipboard: boolean;
   createPdfKeyComboKeys: KeyComboKeys;
   screenshotKeyComboKeys: KeyComboKeys;
   changeSaveDirectoryKeyComboKeys: KeyComboKeys;
@@ -39,6 +40,7 @@ const defaultChangeSaveDirectoryKeyComboKeys: KeyComboKeys = {
 
 const INITIAL_SETTINGS_VALUE: Settings = {
   enableOCR: false,
+  screenshotsToClipboard: false,
   createPdfKeyComboKeys: defaultCreatePdfKeyComboKeys,
   screenshotKeyComboKeys: defaultScreenshotKeyComboKeys,
   changeSaveDirectoryKeyComboKeys: defaultChangeSaveDirectoryKeyComboKeys,

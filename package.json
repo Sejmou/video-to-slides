@@ -21,7 +21,7 @@
     "@emotion/styled": "^11.9.3",
     "@mui/icons-material": "^5.8.4",
     "@mui/material": "^5.8.5",
-    "@types/jspdf": "^2.0.0",
+    "@mui/system": "^5.14.8",
     "@types/wicg-file-system-access": "^2020.9.5",
     "jspdf": "^2.5.1",
     "react": "^17.0.1",

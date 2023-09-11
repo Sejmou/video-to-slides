@@ -155,8 +155,18 @@ const Popup = () => {
             <PickerInput
               value={dirName ? dirName : 'Not selected'}
               buttonLabel={dirName ? 'Change' : 'Select'}
-              helperText="The directory used for storing screenshots and PDF generation"
+              helperText="The directory used for storing screenshots and PDF generation."
               onClick={onChangeDirectoryClick}
+            />
+          </Card>
+          <Card className={styles.card}>
+            <Typography variant="h5">Screenshots</Typography>
+            <SwitchInput
+              checked={settingsAny.screenshotsToClipboard}
+              onChange={ev =>
+                handleChange('screenshotsToClipboard', ev.target.checked)
+              }
+              label="copy to clipboard"
             />
           </Card>
           <Card className={styles.card}>

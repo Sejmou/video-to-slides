@@ -35,18 +35,19 @@ You can also define keyboard shortcuts for some actions. The table below shows t
 
 This Chrome extension is written in Typescript. React is used for the content script and popup page. The production/development build pipeline is implemented using webpack. The project was built on top of [this](https://github.com/chibat/chrome-extension-typescript-starter) starter template. Testing with Jest would theoretically also be possible but no special tests are implemented.
 
-PDFs are generated with [jspdf](https://parall.ax/products/jspdf). For OCR, [tessseract.js](https://tesseract.projectnaptha.com/) was used. Many added UI components rely on [React Material UI](https://mui.com/). [use-chrome-storage](https://github.com/onikienko/use-chrome-storage) made accessing Chrome storage from React quite convenient.
+PDFs are generated with [jspdf](https://parall.ax/products/jspdf). For OCR, [tessseract.js](https://tesseract.projectnaptha.com/) is used. Many added UI components rely on [React Material UI](https://mui.com/). [use-chrome-storage](https://github.com/onikienko/use-chrome-storage) made accessing Chrome storage from React quite convenient.
 
 ### Setup
+Note: this project uses `pnpm`, but `npm` or `yarn` should also work (however, no lockfile exists).
 
 ```
-npm install
+pnpm install
 ```
 
 ### Build
 
 ```
-npm run build
+pnpm run build
 ```
 
 ### While developing
@@ -54,7 +55,7 @@ npm run build
 Make use of automated dev-build updates on every change in the source code by running
 
 ```
-npm run watch
+pnpm run watch
 ```
 
 or hit <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>B</kbd> (if using VS code)

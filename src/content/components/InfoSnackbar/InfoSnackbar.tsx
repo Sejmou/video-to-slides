@@ -1,19 +1,25 @@
 import React from 'react';
 import {
+  Button,
   IconButton,
   Snackbar,
   SnackbarCloseReason,
   SnackbarContent,
+  Typography,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 export type AlertSeverity = 'error' | 'warning' | 'info' | 'success';
-export interface SnackbarState {
+export type SnackbarState = {
   open: boolean;
   message: string;
   severity: AlertSeverity;
   autoHideDuration?: number;
-}
+  relatedAction?: {
+    label: string;
+    callback: () => void;
+  };
+};
 
 export const InfoSnackbar = (props: {
   snackbarState: SnackbarState;
@@ -24,9 +30,19 @@ export const InfoSnackbar = (props: {
   ) => void;
 }) => {
   const { snackbarState, onClose: onSnackbarClose } = props;
+  const relatedAction = snackbarState.relatedAction;
 
   const snackbarAction = (
     <>
+      {!!relatedAction && (
+        <Button
+          color="secondary"
+          size="medium"
+          onClick={relatedAction.callback}
+        >
+          {relatedAction.label}
+        </Button>
+      )}
       <IconButton
         aria-label="close"
         color="inherit"

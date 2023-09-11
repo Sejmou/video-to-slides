@@ -12,6 +12,7 @@ export async function storeVideoSnapshot(
   const writableStream = await fileHandle.createWritable();
   await writableStream.write(snapshotBlob!);
   await writableStream.close();
+  return snapshotBlob;
 }
 
 function initVideoCanvas() {

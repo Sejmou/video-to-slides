@@ -38,7 +38,7 @@ const ContentPageApp = () => {
   const [settingsAny] = useSettingsStore();
   // TODO: figure out smarter way to get type information
   const settings = settingsAny as Settings;
-  const { enableOCR } = settings;
+  const { enableOCR, screenshotsToClipboard } = settings;
 
   const [snackbarState, setSnackbarState] = useState<SnackbarState>({
     open: false,
@@ -69,9 +69,29 @@ const ContentPageApp = () => {
         { create: true }
       );
 
-      await storeVideoSnapshot(video, newFileHandle);
+      const snapshotBlob = await storeVideoSnapshot(video, newFileHandle);
+      // snapshotBlob should always be defined, but too lazy to check why this is necessary atm
+      if (snapshotBlob && screenshotsToClipboard) {
+        // I REALLY don't get why webpack (but not my IDE!?) complains when compiling the following line, so just ignore the error to make compilation work
+        // @ts-ignore
+        const clipboardItem = new ClipboardItem({
+          [snapshotBlob.type]: snapshotBlob,
+        });
+        navigator.clipboard.write([clipboardItem]);
+      }
       const message = `Screenshot saved to '${dirHandle.name}' as '${newFileHandle.name}'`;
-      showMessage(message, 'success', 2500);
+      showSnackbar({
+        message,
+        severity: 'success',
+        autoHideDuration: 2500,
+        relatedAction: {
+          label: 'Undo',
+          callback: async () => {
+            await dirHandle.removeEntry(newFileHandle.name);
+            hideSnackbar();
+          },
+        },
+      });
     } catch (error) {
       handleFileAccessErrors(error, 'Could not save video screenshot');
     }
@@ -85,13 +105,13 @@ const ContentPageApp = () => {
       }
       const dirHandle = await dirAccess();
 
-      showMessage(
-        `Generating PDF from video screenshots in '${dirHandle.name}'${
+      showSnackbar({
+        message: `Generating PDF from video screenshots in '${dirHandle.name}'${
           enableOCR ? ' (using text recognition, might take a while)' : ''
         }...`,
-        'info',
-        enableOCR ? 7000 : 4000
-      );
+        severity: 'info',
+        autoHideDuration: enableOCR ? 7000 : 4000,
+      });
 
       const imgFileHandles: FileSystemFileHandle[] = [];
 
@@ -107,10 +127,10 @@ const ContentPageApp = () => {
       imgFileHandles.sort((a, b) => a.name.localeCompare(b.name));
 
       if (imgFileHandles.length === 0) {
-        showMessage(
-          `Cannot generate PDF: No screenshot images for current video (id: ${videoId}) found!`,
-          'error'
-        );
+        showSnackbar({
+          message: `Cannot generate PDF: No screenshot images for current video (id: ${videoId}) found!`,
+          severity: 'error',
+        });
         return;
       }
 
@@ -129,15 +149,15 @@ const ContentPageApp = () => {
       );
 
       if (pdfFileHandle) {
-        showMessage(
-          `PDF successfully generated (stored in '${dirHandle.name}' as '${pdfFileHandle.name}')`,
-          'success'
-        );
+        showSnackbar({
+          message: `PDF successfully generated (stored in '${dirHandle.name}' as '${pdfFileHandle.name}')`,
+          severity: 'success',
+        });
       } else {
-        showMessage(
-          `Could not generate PDF from slide images in '${dirHandle.name}'`,
-          'error'
-        );
+        showSnackbar({
+          message: `Could not generate PDF from slide images in '${dirHandle.name}'`,
+          severity: 'error',
+        });
       }
     } catch (error) {
       handleFileAccessErrors(error, 'PDF generation failed');
@@ -188,17 +208,19 @@ const ContentPageApp = () => {
       severity: 'info',
     }));
 
-  const showMessage = (
-    message: string,
-    severity: AlertSeverity,
-    autoHideDuration?: number
-  ) =>
+  const showSnackbar = (config: Omit<SnackbarState, 'open'>) =>
     setSnackbarState(() => ({
       open: true,
-      severity,
-      message,
-      autoHideDuration,
+      ...config,
     }));
+
+  const hideSnackbar = () => {
+    setSnackbarState(() => ({
+      open: false,
+      message: '',
+      severity: 'info',
+    }));
+  };
 
   const handleFileAccessErrors = (error: unknown, failedActionDesc: string) => {
     let reasonDesc = 'Something went wrong :/';
@@ -210,7 +232,10 @@ const ContentPageApp = () => {
       }
     }
     {
-      showMessage([failedActionDesc, reasonDesc].join(' - '), 'error');
+      showSnackbar({
+        message: [failedActionDesc, reasonDesc].join(' - '),
+        severity: 'error',
+      });
     }
   };
 
